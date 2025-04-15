@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 # === Налаштування ===
 BOT_TOKEN = '8159278233:AAFJ6nwC_GuSogY_Un2D-u4sKQD4pLv9VQE'  # Замініть на свій токен
-ADMIN_USERNAME = '@PETERhhcPEN'    # Куди надсилати замовлення
+ADMIN_ID = 6841298509    # Куди надсилати замовлення (Telegram user ID)
 
 # === Ініціалізація ===
 bot = Bot(token=BOT_TOKEN)
@@ -52,7 +52,7 @@ async def item_handler(callback: types.CallbackQuery):
     if not item:
         await callback.answer("Товар не знайдено")
         return
-    
+
     photo = InputFile(item['image'])
     caption = f"<b>{item['name']}</b>\n\n{item['description']}\n💸 <b>Ціна:</b> {item['price']} грн"
     kb = InlineKeyboardMarkup().add(
@@ -68,7 +68,7 @@ user_orders = {}
 async def order_start(callback: types.CallbackQuery):
     _, category, item_id = callback.data.split("_", 2)
     user_orders[callback.from_user.id] = {"category": category, "item_id": item_id, "step": 1, "data": {}}
-    await callback.message.answer("✍️ Введіть ваше <b>Імʼя та Прізвище</b>:", parse_mode='HTML')
+    await callback.message.answer("✍️ Введіть ваше <b>Ім’я та Прізвище</b>:", parse_mode='HTML')
 
 @dp.message_handler(lambda m: m.from_user.id in user_orders)
 async def order_process(message: types.Message):
@@ -82,7 +82,7 @@ async def order_process(message: types.Message):
     elif step == 2:
         order['data']['phone'] = message.text
         order['step'] = 3
-        await message.answer("🏙️ Введіть <b>місто</b> доставки:", parse_mode='HTML')
+        await message.answer("🏩 Введіть <b>місто</b> доставки:", parse_mode='HTML')
     elif step == 3:
         order['data']['city'] = message.text
         order['step'] = 4
@@ -103,13 +103,14 @@ async def order_confirm(callback: types.CallbackQuery):
     item = next((x for x in products[order['category']] if x['id'] == order['item_id']), None)
 
     text = f"🔥 <b>НОВЕ ЗАМОВЛЕННЯ</b> 🔥\n\n" \
-           f"🛍️ Товар: {item['name']}\n💰 Ціна: {item['price']} грн\n💳 Оплата: {pay_method}\n\n" \
-           f"👤 Імʼя: {order['data']['name']}\n📞 Телефон: {order['data']['phone']}\n" \
-           f"🏙️ Місто: {order['data']['city']}\n🏤 Відділення НП: {order['data']['np']}"
+           f"🛕️ Товар: {item['name']}\n💰 Ціна: {item['price']} грн\n💳 Оплата: {pay_method}\n\n" \
+           f"👤 Ім’я: {order['data']['name']}\n📞 Телефон: {order['data']['phone']}\n" \
+           f"🏩 Місто: {order['data']['city']}\n🏤 Відділення НП: {order['data']['np']}"
 
-    await bot.send_message(callback.from_user.id, "✅ Ваше замовлення оформлено! Очікуйте звʼязку. 💚")
-    await bot.send_message(ADMIN_USERNAME, text, parse_mode='HTML')
+    await bot.send_message(callback.from_user.id, "✅ Ваше замовлення оформлено! Очікуйте звізку. 💚")
+    await bot.send_message(ADMIN_ID, text, parse_mode='HTML')
 
 # === Запуск ===
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+
