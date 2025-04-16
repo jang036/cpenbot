@@ -5,7 +5,7 @@ import logging
 
 # Налаштування
 logging.basicConfig(level=logging.INFO)
-BOT_TOKEN = '8159278233:AAFJ6nwC_GuSogY_Un2D-u4sKQD4pLv9VQE'
+BOT_TOKEN = 'YOUR_BOT_TOKEN'  # Заміни на свій токен
 ADMIN_ID = 6841298509
 
 bot = Bot(token=BOT_TOKEN)
@@ -32,10 +32,13 @@ async def start_handler(message: types.Message):
 async def category_handler(callback: types.CallbackQuery):
     category = callback.data.split("cat_")[1]
     kb = InlineKeyboardMarkup()
-    for item in products[category]:
-        kb.add(InlineKeyboardButton(item['name'], callback_data=f"item_{category}_{item['id']}"))
-    kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_main"))
-    await bot.send_message(callback.message.chat.id, f"📦 {category}", reply_markup=kb)
+    if category in products:
+        for item in products[category]:
+            kb.add(InlineKeyboardButton(item['name'], callback_data=f"item_{category}_{item['id']}"))
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_main"))
+        await bot.send_message(callback.message.chat.id, f"📦 {category}", reply_markup=kb)
+    else:
+        await callback.answer("Ця категорія не існує.")
 
 @dp.callback_query_handler(lambda c: c.data == "back_main")
 async def back_to_main(callback: types.CallbackQuery):
@@ -48,7 +51,7 @@ async def back_to_main(callback: types.CallbackQuery):
 @dp.callback_query_handler(lambda c: c.data.startswith("item_"))
 async def item_handler(callback: types.CallbackQuery):
     _, category, item_id = callback.data.split("_", 2)
-    item = next((x for x in products[category] if x['id'] == item_id), None)
+    item = next((x for x in products.get(category, []) if x['id'] == item_id), None)
     if not item:
         await callback.answer("Товар не знайдено")
         return
@@ -62,16 +65,18 @@ async def item_handler(callback: types.CallbackQuery):
     await bot.send_photo(callback.message.chat.id, photo=photo, caption=caption, parse_mode='HTML', reply_markup=kb)
 
 @dp.callback_query_handler(lambda c: c.data.startswith("add_to_cart_"))
-async def add_to_cart_direct(callback: types.CallbackQuery):
+async def add_to_cart(callback: types.CallbackQuery):
     _, category, item_id = callback.data.split("_", 2)
     user_id = callback.from_user.id
     user_carts.setdefault(user_id, [])
 
+    # Перевірка, чи є товар у кошику, якщо є — збільшуємо кількість
     for entry in user_carts[user_id]:
         if entry['item_id'] == item_id:
             entry['quantity'] += 1
             break
     else:
+        # Додаємо товар в кошик, якщо його ще немає
         user_carts[user_id].append({"category": category, "item_id": item_id, "quantity": 1})
 
     await callback.answer("Товар додано в кошик ✅")
@@ -89,7 +94,7 @@ async def view_cart(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup()
 
     for i, entry in enumerate(cart):
-        item = next((x for x in products[entry['category']] if x['id'] == entry['item_id']), None)
+        item = next((x for x in products.get(entry['category'], []) if x['id'] == entry['item_id']), None)
         if not item:
             continue
         subtotal = item['price'] * entry['quantity']
@@ -106,14 +111,6 @@ async def view_cart(callback: types.CallbackQuery):
     kb.add(InlineKeyboardButton("⬅️ Назад до категорій", callback_data="back_to_categories"))
     kb.add(InlineKeyboardButton("🗑 Очистити кошик", callback_data="clear_cart"))
     await callback.message.answer(text, reply_markup=kb)
-
-@dp.callback_query_handler(lambda c: c.data == "back_to_categories")
-async def back_to_categories(callback: types.CallbackQuery):
-    kb = InlineKeyboardMarkup(row_width=2)
-    for category in products:
-        kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
-    await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 @dp.callback_query_handler(lambda c: c.data == "clear_cart")
 async def clear_cart(callback: types.CallbackQuery):
