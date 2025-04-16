@@ -24,6 +24,29 @@ products = load_products()
 user_carts = {}
 user_orders = {}
 
+# === Функція для надсилання повідомлення адміну ===
+async def send_order_to_admin(user_id, order_data):
+    order_text = f"Нове замовлення від користувача {user_id}:\n"
+    order_text += f"Імʼя та Прізвище: {order_data['name']}\n"
+    order_text += f"Телефон: {order_data['phone']}\n"
+    order_text += f"Місто: {order_data['city']}\n"
+    order_text += f"Відділення НП: {order_data['np']}\n"
+    order_text += f"Спосіб оплати: {order_data['payment']}\n"
+    
+    # Додаємо товари
+    total = 0
+    for entry in user_carts[user_id]:
+        item = next((x for x in products[entry['category']] if x['id'] == entry['item_id']), None)
+        if item:
+            subtotal = item['price'] * entry['quantity']
+            total += subtotal
+            order_text += f"{item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
+    
+    order_text += f"\n💰 Загальна сума: {total} грн"
+    
+    # Надсилаємо повідомлення адміну
+    await bot.send_message(ADMIN_ID, order_text)
+
 # === Головне меню ===
 @dp.message_handler(commands=['start'])
 async def start_handler(message: types.Message):
@@ -87,18 +110,6 @@ async def add_to_cart(callback: types.CallbackQuery):
         user_carts[user_id].append({"category": category, "item_id": item_id, "quantity": qty})
 
     await callback.answer(f"Додано {qty} шт до кошика ✅")
-
-# === Додавання товару в кошик з картки товару ===
-@dp.callback_query_handler(lambda c: c.data.startswith("add_to_cart_"))
-async def add_to_cart_direct(callback: types.CallbackQuery):
-    _, category, item_id = callback.data.split("_", 2)
-    user_id = callback.from_user.id
-    user_carts.setdefault(user_id, [])
-
-    item = next((x for x in products[category] if x['id'] == item_id), None)
-    if item:
-        user_carts[user_id].append({"category": category, "item_id": item_id, "quantity": 1})
-        await callback.answer("Товар додано в кошик ✅")
 
 # === Перегляд кошика ===
 @dp.callback_query_handler(lambda c: c.data == "view_cart")
@@ -213,6 +224,10 @@ async def payment_method(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     order = user_orders[user_id]
     order['data']['payment'] = callback.data.split("_")[1]
+    
+    # Надсилаємо замовлення адміну
+    await send_order_to_admin(user_id, order['data'])
+    
     await callback.message.answer("✅ Замовлення оформлено! Очікуйте підтвердження.")
     del user_orders[user_id]  # Очистка замовлення
     user_carts[user_id] = []  # Очистка кошика
