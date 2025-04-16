@@ -58,7 +58,7 @@ async def item_handler(callback: types.CallbackQuery):
     photo = InputFile(item['image'])
     caption = f"<b>{item['name']}</b>\n\n{item['description']}\n<b>Ціна:</b> {item['price']} грн"
     # Замінив емодзі на Unicode
-    caption += "\uD83D\uDCB8 <b>Ціна:</b> {item['price']} грн"
+    caption += f"💰 <b>Ціна:</b> {item['price']} грн
     kb = InlineKeyboardMarkup(row_width=3)
     for qty in [1, 2, 3]:
         kb.insert(InlineKeyboardButton(f"➕ {qty} шт", callback_data=f"add_{category}_{item_id}_{qty}"))
