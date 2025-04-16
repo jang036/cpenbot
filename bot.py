@@ -57,8 +57,8 @@ async def item_handler(callback: types.CallbackQuery):
         return
     photo = InputFile(item['image'])
     caption = f"<b>{item['name']}</b>\n\n{item['description']}\n<b>Ціна:</b> {item['price']} грн"
-{item['description']}
-💸 <b>Ціна:</b> {item['price']} грн"
+    # Замінив емодзі на Unicode
+    caption += "\uD83D\uDCB8 <b>Ціна:</b> {item['price']} грн"
     kb = InlineKeyboardMarkup(row_width=3)
     for qty in [1, 2, 3]:
         kb.insert(InlineKeyboardButton(f"➕ {qty} шт", callback_data=f"add_{category}_{item_id}_{qty}"))
@@ -91,8 +91,7 @@ async def view_cart(callback: types.CallbackQuery):
         await callback.message.answer("🛒 Ваш кошик порожній")
         return
 
-    text = "🛒 Ваш кошик:
-"
+    text = "🛒 Ваш кошик:\n"
     total = 0
     kb = InlineKeyboardMarkup()
 
@@ -102,16 +101,14 @@ async def view_cart(callback: types.CallbackQuery):
             continue
         subtotal = item['price'] * entry['quantity']
         total += subtotal
-        text += f"{i+1}. {item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн
-"
+        text += f"{i+1}. {item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
         kb.add(
             InlineKeyboardButton(f"➖ {item['name']}", callback_data=f"remove_{entry['item_id']}"),
             InlineKeyboardButton(f"➕1", callback_data=f"addqty_{entry['item_id']}"),
             InlineKeyboardButton(f"➖1", callback_data=f"subqty_{entry['item_id']}")
         )
 
-    text += f"
-💰 Всього: {total} грн"
+    text += f"\n💰 Всього: {total} грн"
     kb.add(InlineKeyboardButton("📦 Оформити замовлення", callback_data="checkout"))
     await callback.message.answer(text, reply_markup=kb)
 
