@@ -61,7 +61,6 @@ async def item_handler(callback: types.CallbackQuery):
         return
     photo = InputFile(item['image'])
     caption = f"<b>{item['name']}</b>\n\n{item['description']}\n<b>Ціна:</b> {item['price']} грн"
-    # Замінив емодзі на Unicode
     caption += f"💰 <b>Ціна:</b> {item['price']} грн"
     kb = InlineKeyboardMarkup(row_width=3)
     for qty in [1, 2, 3]:
@@ -114,6 +113,8 @@ async def view_cart(callback: types.CallbackQuery):
 
     text += f"\n💰 Всього: {total} грн"
     kb.add(InlineKeyboardButton("📦 Оформити замовлення", callback_data="checkout"))
+    kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_to_categories"))
+    kb.add(InlineKeyboardButton("🗑 Очистити кошик", callback_data="clear_cart"))
     await callback.message.answer(text, reply_markup=kb)
 
 # === Редагування кількості ===
@@ -142,6 +143,12 @@ async def remove_item(callback: types.CallbackQuery):
     item_id = callback.data.split("remove_")[1]
     user_carts[callback.from_user.id] = [x for x in user_carts[callback.from_user.id] if x['item_id'] != item_id]
     await view_cart(callback)
+
+# === Очистка кошика ===
+@dp.callback_query_handler(lambda c: c.data == "clear_cart")
+async def clear_cart(callback: types.CallbackQuery):
+    user_carts[callback.from_user.id] = []
+    await callback.answer("🗑 Ваш кошик очищено")
 
 # === Оформлення замовлення ===
 @dp.callback_query_handler(lambda c: c.data == "checkout")
@@ -210,4 +217,3 @@ async def confirm_order(callback: types.CallbackQuery):
 # === Запуск ===
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
-
