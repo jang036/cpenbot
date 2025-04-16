@@ -41,11 +41,15 @@ async def category_handler(callback: types.CallbackQuery):
     for item in products[category]:
         kb.add(InlineKeyboardButton(item['name'], callback_data=f"item_{category}_{item['id']}"))
     kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_main"))
-    await callback.message.edit_text(f"📦 {category}", reply_markup=kb)
+    await bot.send_message(callback.message.chat.id, f"📦 {category}", reply_markup=kb)
 
 @dp.callback_query_handler(lambda c: c.data == "back_main")
 async def back_to_main(callback: types.CallbackQuery):
-    await start_handler(callback.message)
+    kb = InlineKeyboardMarkup(row_width=2)
+    for category in products:
+        kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
+    await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Вибір товару ===
 @dp.callback_query_handler(lambda c: c.data.startswith("item_"))
