@@ -26,7 +26,9 @@ user_orders = {}
 
 # === Функція для надсилання повідомлення адміну ===
 async def send_order_to_admin(user_id, order_data):
-    order_text = f"Нове замовлення від користувача {user_id}:\n"
+    user = await bot.get_chat(user_id)  # Получаем объект пользователя по его ID
+    username = user.username if user.username else "Нік відсутній"  # Получаем ник, если он есть
+    order_text = f"Нове замовлення від користувача @{username}:\n"  # Используем ник
     order_text += f"Імʼя та Прізвище: {order_data['name']}\n"
     order_text += f"Телефон: {order_data['phone']}\n"
     order_text += f"Місто: {order_data['city']}\n"
@@ -225,7 +227,7 @@ async def payment_method(callback: types.CallbackQuery):
     order = user_orders[user_id]
     order['data']['payment'] = callback.data.split("_")[1]
     
-    # Надсилаємо замовлення адміну
+    # Надсилаємо замовлення адміну з нікнеймом користувача
     await send_order_to_admin(user_id, order['data'])
     
     await callback.message.answer("✅ Замовлення оформлено! Очікуйте підтвердження.")
