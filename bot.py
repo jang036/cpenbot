@@ -5,8 +5,8 @@ import logging
 
 # Налаштування
 logging.basicConfig(level=logging.INFO)
-BOT_TOKEN = '8159278233:AAFJ6nwC_GuSogY_Un2D-u4sKQD4pLv9VQE'
-ADMIN_CHAT_ID = '@PETERhhcPEN'
+BOT_TOKEN = 'YOUR_BOT_TOKEN'
+ADMIN_ID = 6841298509
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
@@ -40,7 +40,7 @@ async def category_handler(callback: types.CallbackQuery):
     else:
         await callback.answer("Ця категорія не існує.")
 
-@dp.callback_query_handler(lambda c: c.data == "back_main")
+@dp.callback_query_handler(lambda c: c.data == "back_main" or c.data == "back_to_categories")
 async def back_to_main(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
@@ -92,7 +92,14 @@ async def view_cart(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup()
 
     for i, entry in enumerate(cart):
-        item = next((x for x in products.get(entry['category'], []) if x['id'] == entry['item_id']), None)
+        item = None
+        for cat_items in products.values():
+            for x in cat_items:
+                if x['id'] == entry['item_id']:
+                    item = x
+                    break
+            if item:
+                break
         if not item:
             continue
         subtotal = item['price'] * entry['quantity']
@@ -179,35 +186,38 @@ async def payment_method(callback: types.CallbackQuery):
     order = user_orders[user_id]
     order['data']['payment'] = callback.data.split("_")[1]
 
-    # Формування замовлення
+    # Формуємо замовлення
     cart = user_carts.get(user_id, [])
-    total = 0
     items_text = ""
+    total = 0
     for entry in cart:
-        item = next((x for x in products.get(entry['category'], []) if x['id'] == entry['item_id']), None)
+        item = None
+        for cat_items in products.values():
+            for x in cat_items:
+                if x['id'] == entry['item_id']:
+                    item = x
+                    break
+            if item:
+                break
         if not item:
             continue
         subtotal = item['price'] * entry['quantity']
         total += subtotal
-        items_text += f"{item['name']} — {entry['quantity']} x {item['price']} грн = {subtotal} грн\n"
+        items_text += f"{item['name']} - {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
 
-    username = f"@{callback.from_user.username}" if callback.from_user.username else f"ID: {user_id}"
+    order_text = (
+        f"📥 <b>Нове замовлення!</b>\n\n"
+        f"👤 Імʼя: {order['data']['name']}\n"
+        f"📞 Телефон: {order['data']['phone']}\n"
+        f"🏙️ Місто: {order['data']['city']}\n"
+        f"🏤 Відділення НП: {order['data']['np']}\n"
+        f"💳 Оплата: {'На картку' if order['data']['payment']=='card' else 'Накладений платіж'}\n"
+        f"🧾 Username: @{callback.from_user.username or 'немає'}\n"
+        f"\n🛒 Замовлення:\n{items_text}\n"
+        f"💰 Всього: {total} грн"
+    )
 
-    order_text = f"""📦 <b>НОВЕ ЗАМОВЛЕННЯ</b>
-
-👤 Імʼя: {order['data']['name']}
-📞 Телефон: {order['data']['phone']}
-🏙️ Місто: {order['data']['city']}
-🏤 Відділення НП: {order['data']['np']}
-💳 Оплата: {'На картку' if order['data']['payment'] == 'card' else 'Накладений платіж'}
-🔗 Клієнт: {username}
-
-🛒 <b>Товари:</b>
-{items_text}
-💰 <b>Всього: {total} грн</b>
-"""
-
-    await bot.send_message(chat_id=ADMIN_CHAT_ID, text=order_text, parse_mode='HTML')
+    await bot.send_message(ADMIN_ID, order_text, parse_mode='HTML')
     await callback.message.answer("✅ Замовлення оформлено! Очікуйте підтвердження.")
     del user_orders[user_id]
     user_carts[user_id] = []
