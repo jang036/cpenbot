@@ -5,8 +5,8 @@ import logging
 
 # Налаштування
 logging.basicConfig(level=logging.INFO)
-BOT_TOKEN = '8159278233:AAFJ6nwC_GuSogY_Un2D-u4sKQD4pLv9VQE'  # Заміни на свій токен
-ADMIN_ID = 6841298509
+BOT_TOKEN = '8159278233:AAFJ6nwC_GuSogY_Un2D-u4sKQD4pLv9VQE'
+ADMIN_CHAT_ID = '@PETERhhcPEN'
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
@@ -70,13 +70,11 @@ async def add_to_cart(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     user_carts.setdefault(user_id, [])
 
-    # Перевірка, чи є товар у кошику, якщо є — збільшуємо кількість
     for entry in user_carts[user_id]:
         if entry['item_id'] == item_id:
             entry['quantity'] += 1
             break
     else:
-        # Додаємо товар в кошик, якщо його ще немає
         user_carts[user_id].append({"category": category, "item_id": item_id, "quantity": 1})
 
     await callback.answer("Товар додано в кошик ✅")
@@ -180,6 +178,36 @@ async def payment_method(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     order = user_orders[user_id]
     order['data']['payment'] = callback.data.split("_")[1]
+
+    # Формування замовлення
+    cart = user_carts.get(user_id, [])
+    total = 0
+    items_text = ""
+    for entry in cart:
+        item = next((x for x in products.get(entry['category'], []) if x['id'] == entry['item_id']), None)
+        if not item:
+            continue
+        subtotal = item['price'] * entry['quantity']
+        total += subtotal
+        items_text += f"{item['name']} — {entry['quantity']} x {item['price']} грн = {subtotal} грн\n"
+
+    username = f"@{callback.from_user.username}" if callback.from_user.username else f"ID: {user_id}"
+
+    order_text = f"""📦 <b>НОВЕ ЗАМОВЛЕННЯ</b>
+
+👤 Імʼя: {order['data']['name']}
+📞 Телефон: {order['data']['phone']}
+🏙️ Місто: {order['data']['city']}
+🏤 Відділення НП: {order['data']['np']}
+💳 Оплата: {'На картку' if order['data']['payment'] == 'card' else 'Накладений платіж'}
+🔗 Клієнт: {username}
+
+🛒 <b>Товари:</b>
+{items_text}
+💰 <b>Всього: {total} грн</b>
+"""
+
+    await bot.send_message(chat_id=ADMIN_CHAT_ID, text=order_text, parse_mode='HTML')
     await callback.message.answer("✅ Замовлення оформлено! Очікуйте підтвердження.")
     del user_orders[user_id]
     user_carts[user_id] = []
