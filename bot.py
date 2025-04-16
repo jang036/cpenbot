@@ -56,7 +56,10 @@ async def item_handler(callback: types.CallbackQuery):
         await callback.answer("Товар не знайдено")
         return
     photo = InputFile(item['image'])
-    caption = f"<b>{item['name']}</b>\n\n{item['description']}\n💸 <b>Ціна:</b> {item['price']} грн"
+    caption = f"<b>{item['name']}</b>
+
+{item['description']}
+💸 <b>Ціна:</b> {item['price']} грн"
     kb = InlineKeyboardMarkup(row_width=3)
     for qty in [1, 2, 3]:
         kb.insert(InlineKeyboardButton(f"➕ {qty} шт", callback_data=f"add_{category}_{item_id}_{qty}"))
@@ -71,7 +74,6 @@ async def add_to_cart(callback: types.CallbackQuery):
     qty = int(qty)
     user_carts.setdefault(user_id, [])
 
-    # Перевіряємо, чи товар вже є в кошику
     for entry in user_carts[user_id]:
         if entry['item_id'] == item_id:
             entry['quantity'] += qty
@@ -90,7 +92,8 @@ async def view_cart(callback: types.CallbackQuery):
         await callback.message.answer("🛒 Ваш кошик порожній")
         return
 
-    text = "🛒 Ваш кошик:\n"
+    text = "🛒 Ваш кошик:
+"
     total = 0
     kb = InlineKeyboardMarkup()
 
@@ -100,14 +103,16 @@ async def view_cart(callback: types.CallbackQuery):
             continue
         subtotal = item['price'] * entry['quantity']
         total += subtotal
-        text += f"{i+1}. {item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
+        text += f"{i+1}. {item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн
+"
         kb.add(
             InlineKeyboardButton(f"➖ {item['name']}", callback_data=f"remove_{entry['item_id']}"),
             InlineKeyboardButton(f"➕1", callback_data=f"addqty_{entry['item_id']}"),
             InlineKeyboardButton(f"➖1", callback_data=f"subqty_{entry['item_id']}")
         )
 
-    text += f"\n💰 Всього: {total} грн"
+    text += f"
+💰 Всього: {total} грн"
     kb.add(InlineKeyboardButton("📦 Оформити замовлення", callback_data="checkout"))
     await callback.message.answer(text, reply_markup=kb)
 
@@ -186,12 +191,18 @@ async def confirm_order(callback: types.CallbackQuery):
             total += subtotal
             items_text += f"- {item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
 
-    text = f"🔥 <b>НОВЕ ЗАМОВЛЕННЯ</b> 🔥
-👤 Telegram: @\{callback.from_user.username or 'без username'}
-
-" \
-           f"{items_text}\n💰 <b>Загальна сума:</b> {total} грн\n💳 Оплата: {pay_method}\n\n" \
-           f"👤 Імʼя: {order_data['name']}\n📞 Телефон: {order_data['phone']}\n🏙️ Місто: {order_data['city']}\n🏤 Відділення НП: {order_data['np']}"
+    username = callback.from_user.username or 'без username'
+    text = (
+        f"🔥 <b>НОВЕ ЗАМОВЛЕННЯ</b> 🔥\n"
+        f"👤 Telegram: @{username}\n\n"
+        f"{items_text}"
+        f"\n💰 <b>Загальна сума:</b> {total} грн\n"
+        f"💳 Оплата: {pay_method}\n\n"
+        f"👤 Імʼя: {order_data['name']}\n"
+        f"📞 Телефон: {order_data['phone']}\n"
+        f"🏙️ Місто: {order_data['city']}\n"
+        f"🏤 Відділення НП: {order_data['np']}"
+    )
 
     await bot.send_message(user_id, "✅ Ваше замовлення оформлено! Очікуйте звʼязку. 💚")
     await bot.send_message(ADMIN_ID, text, parse_mode='HTML')
