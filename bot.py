@@ -56,7 +56,7 @@ async def item_handler(callback: types.CallbackQuery):
     caption = f"<b>{item['name']}</b>\n\n{item['description']}\n💰 <b>Ціна:</b> {item['price']} грн"
     kb = InlineKeyboardMarkup(row_width=2)
     kb.add(InlineKeyboardButton("➕ Додати у кошик", callback_data=f"add_to_cart_{category}_{item_id}"))
-    kb.add(InlineKeyboardButton("🛒 В кошик", callback_data="view_cart"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     kb.add(InlineKeyboardButton("⬅️ До категорії", callback_data=f"cat_{category}"))
     kb.add(InlineKeyboardButton("🏷 До категорій", callback_data="back_to_categories"))
     await bot.send_photo(callback.message.chat.id, photo=photo, caption=caption, parse_mode='HTML', reply_markup=kb)
