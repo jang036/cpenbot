@@ -30,7 +30,7 @@ async def start_handler(message: types.Message):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
     await message.answer("👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Вибір категорії ===
@@ -41,6 +41,7 @@ async def category_handler(callback: types.CallbackQuery):
     for item in products[category]:
         kb.add(InlineKeyboardButton(item['name'], callback_data=f"item_{category}_{item['id']}"))
     kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_main"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
     await bot.send_message(callback.message.chat.id, f"📦 {category}", reply_markup=kb)
 
 @dp.callback_query_handler(lambda c: c.data == "back_main")
@@ -48,7 +49,7 @@ async def back_to_main(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
     await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Вибір товару ===
@@ -66,8 +67,8 @@ async def item_handler(callback: types.CallbackQuery):
     for qty in [1, 2, 3]:
         kb.insert(InlineKeyboardButton(f"➕ {qty} шт", callback_data=f"add_{category}_{item_id}_{qty}"))
     kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 В кошик", callback_data=f"add_to_cart_{category}_{item_id}"))
     kb.add(InlineKeyboardButton("🏷 До категорій", callback_data="back_to_categories"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
     await bot.send_photo(callback.message.chat.id, photo=photo, caption=caption, parse_mode='HTML', reply_markup=kb)
 
 # === Додавання до кошика ===
@@ -137,7 +138,7 @@ async def back_to_categories(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
     await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Очищення кошика ===
