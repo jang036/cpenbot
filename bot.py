@@ -66,6 +66,8 @@ async def item_handler(callback: types.CallbackQuery):
     for qty in [1, 2, 3]:
         kb.insert(InlineKeyboardButton(f"➕ {qty} шт", callback_data=f"add_{category}_{item_id}_{qty}"))
     kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"cat_{category}"))
+    kb.add(InlineKeyboardButton("🛒 В кошик", callback_data=f"add_to_cart_{category}_{item_id}"))
+    kb.add(InlineKeyboardButton("🏷 До категорій", callback_data="back_to_categories"))
     await bot.send_photo(callback.message.chat.id, photo=photo, caption=caption, parse_mode='HTML', reply_markup=kb)
 
 # === Додавання до кошика ===
@@ -84,6 +86,18 @@ async def add_to_cart(callback: types.CallbackQuery):
         user_carts[user_id].append({"category": category, "item_id": item_id, "quantity": qty})
 
     await callback.answer(f"Додано {qty} шт до кошика ✅")
+
+# === Додавання товару в кошик з картки товару ===
+@dp.callback_query_handler(lambda c: c.data.startswith("add_to_cart_"))
+async def add_to_cart_direct(callback: types.CallbackQuery):
+    _, category, item_id = callback.data.split("_", 2)
+    user_id = callback.from_user.id
+    user_carts.setdefault(user_id, [])
+
+    item = next((x for x in products[category] if x['id'] == item_id), None)
+    if item:
+        user_carts[user_id].append({"category": category, "item_id": item_id, "quantity": 1})
+        await callback.answer("Товар додано в кошик ✅")
 
 # === Перегляд кошика ===
 @dp.callback_query_handler(lambda c: c.data == "view_cart")
@@ -113,9 +127,25 @@ async def view_cart(callback: types.CallbackQuery):
 
     text += f"\n💰 Всього: {total} грн"
     kb.add(InlineKeyboardButton("📦 Оформити замовлення", callback_data="checkout"))
-    kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_to_categories"))
+    kb.add(InlineKeyboardButton("⬅️ Назад до категорій", callback_data="back_to_categories"))
     kb.add(InlineKeyboardButton("🗑 Очистити кошик", callback_data="clear_cart"))
     await callback.message.answer(text, reply_markup=kb)
+
+# === Повернення до категорій ===
+@dp.callback_query_handler(lambda c: c.data == "back_to_categories")
+async def back_to_categories(callback: types.CallbackQuery):
+    kb = InlineKeyboardMarkup(row_width=2)
+    for category in products:
+        kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
+    await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
+
+# === Очищення кошика ===
+@dp.callback_query_handler(lambda c: c.data == "clear_cart")
+async def clear_cart(callback: types.CallbackQuery):
+    user_carts[callback.from_user.id] = []
+    await callback.answer("Ваш кошик очищено! 🧹", show_alert=True)
+    await view_cart(callback)
 
 # === Редагування кількості ===
 @dp.callback_query_handler(lambda c: c.data.startswith("addqty_"))
@@ -143,12 +173,6 @@ async def remove_item(callback: types.CallbackQuery):
     item_id = callback.data.split("remove_")[1]
     user_carts[callback.from_user.id] = [x for x in user_carts[callback.from_user.id] if x['item_id'] != item_id]
     await view_cart(callback)
-
-# === Очистка кошика ===
-@dp.callback_query_handler(lambda c: c.data == "clear_cart")
-async def clear_cart(callback: types.CallbackQuery):
-    user_carts[callback.from_user.id] = []
-    await callback.answer("🗑 Ваш кошик очищено")
 
 # === Оформлення замовлення ===
 @dp.callback_query_handler(lambda c: c.data == "checkout")
@@ -180,40 +204,17 @@ async def process_order_data(message: types.Message):
             InlineKeyboardButton("💳 На картку", callback_data="pay_card"),
             InlineKeyboardButton("📦 Накладений платіж", callback_data="pay_cod")
         )
-        await message.answer("💰 Оберіть спосіб оплати:", reply_markup=kb)
+        await message.answer("💳 Виберіть спосіб оплати:", reply_markup=kb)
 
+# === Платіж ===
 @dp.callback_query_handler(lambda c: c.data.startswith("pay_"))
-async def confirm_order(callback: types.CallbackQuery):
+async def payment_method(callback: types.CallbackQuery):
     user_id = callback.from_user.id
-    pay_method = "На картку" if callback.data == "pay_card" else "Накладений платіж"
-    order_data = user_orders.pop(user_id)['data']
-    cart = user_carts.pop(user_id, [])
+    order = user_orders[user_id]
+    order['data']['payment'] = callback.data.split("_")[1]
+    await callback.message.answer("✅ Замовлення оформлено! Очікуйте підтвердження.")
+    del user_orders[user_id]  # Очистка замовлення
+    user_carts[user_id] = []  # Очистка кошика
 
-    total = 0
-    items_text = ""
-    for entry in cart:
-        item = next((x for x in products[entry['category']] if x['id'] == entry['item_id']), None)
-        if item:
-            subtotal = item['price'] * entry['quantity']
-            total += subtotal
-            items_text += f"- {item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
-
-    username = callback.from_user.username or 'без username'
-    text = (
-        f"🔥 <b>НОВЕ ЗАМОВЛЕННЯ</b> 🔥\n"
-        f"👤 Telegram: @{username}\n\n"
-        f"{items_text}"
-        f"\n💰 <b>Загальна сума:</b> {total} грн\n"
-        f"💳 Оплата: {pay_method}\n\n"
-        f"👤 Імʼя: {order_data['name']}\n"
-        f"📞 Телефон: {order_data['phone']}\n"
-        f"🏙️ Місто: {order_data['city']}\n"
-        f"🏤 Відділення НП: {order_data['np']}"
-    )
-
-    await bot.send_message(user_id, "✅ Ваше замовлення оформлено! Очікуйте звʼязку. 💚")
-    await bot.send_message(ADMIN_ID, text, parse_mode='HTML')
-
-# === Запуск ===
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
