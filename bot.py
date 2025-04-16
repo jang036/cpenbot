@@ -5,7 +5,7 @@ import logging
 
 # Налаштування
 logging.basicConfig(level=logging.INFO)
-BOT_TOKEN = 'YOUR_BOT_TOKEN'  # Заміни на свій токен
+BOT_TOKEN = '8159278233:AAFJ6nwC_GuSogY_Un2D-u4sKQD4pLv9VQE'  # Заміни на свій токен
 ADMIN_ID = 6841298509
 
 bot = Bot(token=BOT_TOKEN)
