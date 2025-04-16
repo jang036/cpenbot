@@ -56,7 +56,7 @@ async def item_handler(callback: types.CallbackQuery):
         await callback.answer("Товар не знайдено")
         return
     photo = InputFile(item['image'])
-    caption = f"<b>{item['name']}</b>\n\n{item['description']}\n\uD83D\uDCB8 <b>Ціна:</b> {item['price']} грн"
+    caption = f"<b>{item['name']}</b>\n\n{item['description']}\n<b>Ціна:</b> {item['price']} грн"
 {item['description']}
 💸 <b>Ціна:</b> {item['price']} грн"
     kb = InlineKeyboardMarkup(row_width=3)
