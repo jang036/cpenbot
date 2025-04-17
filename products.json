@@ -1,196 +1,196 @@
 {
-    "КАРТРИДЖІ 510": [
-        {
-            "id": "cbn510",
-            "name": "CBN Картридж 510",
-            "description": "Обʼєм: 1 мл\nCBN 98%, Терпени 2%",
-            "price": 1300,
-            "image": "img/cbn510.jpg"
-        },
-        {
-            "id": "h4cbdcbn510",
-            "name": "H4CBD + CBN Картридж 510",
-            "description": "Обʼєм: 1 мл\nCBN 49%, H4CBD 49%, Терпени 2%",
-            "price": 1400,
-            "image": "img/h4cbdcbn510.jpg"
-        },
-        {
-            "id": "cb9510",
-            "name": "CB9 Картридж 510",
-            "description": "Обʼєм: 1 мл\nCB9 98%, Терпени 2%",
-            "price": 1800,
-            "image": "img/cb9510.jpg"
-        }
-    ],
-    "КАРТРИДЖІ INNOKIN": [
-        {
-            "id": "cbninnokin",
-            "name": "CBN Картридж Innokin",
-            "description": "Обʼєм: 0.8 мл\nCBN 98%, Терпени 2%",
-            "price": 1100,
-            "image": "img/cbninnokin.jpg"
-        },
-        {
-            "id": "h4cbdcbninnokin",
-            "name": "H4CBD + CBN Картридж Innokin",
-            "description": "Обʼєм: 0.8 мл\nCBN 49%, H4CBD 49%, Терпени 2%",
-            "price": 1200,
-            "image": "img/h4cbdcbninnokin.jpg"
-        },
-        {
-            "id": "cb9innokin",
-            "name": "CB9 Картридж Innokin",
-            "description": "Обʼєм: 0.8 мл\nCB9 98%, Терпени 2%",
-            "price": 1700,
-            "image": "img/cb9innokin.jpg"
-        }
-    ],
-    "СТАРТЕР-ПАКИ": [
-        {
-            "id": "sp1cbn",
-            "name": "Starter Pack 1.0 (CBN)",
-            "description": "510 коннектор, картридж 1 мл\nCBN 98%",
-            "price": 1700,
-            "image": "img/sp1cbn.jpg"
-        },
-        {
-            "id": "sp1h4cbd",
-            "name": "Starter Pack 1.0 (H4CBD+CBN)",
-            "description": "510 коннектор, картридж 1 мл\nCBN 49%, H4CBD 49%",
-            "price": 1800,
-            "image": "img/sp1h4cbd.jpg"
-        },
-        {
-            "id": "sp1cb9",
-            "name": "Starter Pack 1.0 (CB9)",
-            "description": "510 коннектор, картридж 1 мл\nCB9 98%",
-            "price": 2200,
-            "image": "img/sp1cb9.jpg"
-        },
-        {
-            "id": "sp2cbn",
-            "name": "Starter Pack 2.0 (CBN)",
-            "description": "INNOKIN, картридж 0.8 мл\nCBN 98%",
-            "price": 1500,
-            "image": "img/sp2cbn.jpg"
-        },
-        {
-            "id": "sp2h4cbd",
-            "name": "Starter Pack 2.0 (H4CBD+CBN)",
-            "description": "INNOKIN, картридж 0.8 мл\nCBN 49%, H4CBD 49%",
-            "price": 1600,
-            "image": "img/sp2h4cbd.jpg"
-        },
-        {
-            "id": "sp2cb9",
-            "name": "Starter Pack 2.0 (CB9)",
-            "description": "INNOKIN, картридж 0.8 мл\nCB9 98%",
-            "price": 2100,
-            "image": "img/sp2cb9.jpg"
-        },
-        {
-            "id": "monstercbn",
-            "name": "Monster Edition (CBN)",
-            "description": "510, дисплей, рег. напруги\nCBN 98%",
-            "price": 2100,
-            "image": "img/monstercbn.jpg"
-        },
-        {
-            "id": "monsterh4cbd",
-            "name": "Monster Edition (H4CBD+CBN)",
-            "description": "510, дисплей, рег. напруги\nCBN 49%, H4CBD 49%",
-            "price": 2200,
-            "image": "img/monsterh4cbd.jpg"
-        },
-        {
-            "id": "monstercb9",
-            "name": "Monster Edition (CB9)",
-            "description": "510, дисплей, рег. напруги\nCB9 98%",
-            "price": 2600,
-            "image": "img/monstercb9.jpg"
-        }
-    ],
-    "ЦУКЕРКИ": [
-        {
-            "id": "jellychill1",
-            "name": "Желейні цукерки JELLY CHILL (1 шт)",
-            "description": "100 мг H4CBD",
-            "price": 90,
-            "image": "img/jellychill.jpg"
-        },
-        {
-            "id": "jellychill10",
-            "name": "Желейні цукерки JELLY CHILL (10 шт)",
-            "description": "1000 мг H4CBD (10 x 100 мг)",
-            "price": 800,
-            "image": "img/jellychill.jpg"
-        },
-        {
-            "id": "jellyloops1",
-            "name": "Желейні цукерки JELLY LOOPS (1 шт)",
-            "description": "50 мг CB9",
-            "price": 140,
-            "image": "img/jellyloops.jpg"
-        },
-        {
-            "id": "jellyloops10",
-            "name": "Желейні цукерки JELLY LOOPS (10 шт)",
-            "description": "500 мг CB9 (10 x 50 мг)",
-            "price": 1200,
-            "image": "img/jellyloops.jpg"
-        }
-    ],
-    "ЛИМОНАДИ": [
-        {
-            "id": "lemonade_mango",
-            "name": "CBD Лимонад Mango x Pineapple",
-            "description": "50 мг CBD у банці",
-            "price": 110,
-            "image": "img/lemonade.jpg"
-        },
-        {
-            "id": "lemonade_bergamot",
-            "name": "CBD Лимонад Bergamot x Hibiscus",
-            "description": "50 мг CBD у банці",
-            "price": 110,
-            "image": "img/lemonade.jpg"
-        },
-        {
-            "id": "lemonade_orange",
-            "name": "CBD Лимонад Orange x Chili",
-            "description": "50 мг CBD у банці",
-            "price": 110,
-            "image": "img/lemonade.jpg"
-        },
-        {
-            "id": "lemonade_cola",
-            "name": "CBD Лимонад Cola",
-            "description": "50 мг CBD у банці",
-            "price": 110,
-            "image": "img/lemonade.jpg"
-        }
-    ],
-    "Вейпи Cookies": [
-        {
-            "id": "cookies-cbn",
-            "name": "Вейп Cookies 1 ml з CBN 99%",
-            "description": "Картридж обʼємом 1 мл, наповнення: CBN 99%",
-            "price": 1500,
-            "image": "img/cookies_cbn.jpg"
-        },
-        {
-            "id": "cookies-h4cbn",
-            "name": "Вейп Cookies 1 ml з H4CBD 49% + CBN 49%",
-            "description": "Картридж обʼємом 1 мл, наповнення: H4CBD 49% + CBN 49%",
-            "price": 1600,
-            "image": "img/cookies_h4cbn.jpg"
-        },
-        {
-            "id": "cookies-cb9",
-            "name": "Вейп Cookies 1 ml з CB9 99%",
-            "description": "Картридж обʼємом 1 мл, наповнення: CB9 99%",
-            "price": 2000,
-            "image": "img/cookies_cb9.jpg"
-        }
-    ]
+  "КАРТРИДЖІ 510": [
+    {
+      "id": "cbn510",
+      "name": "CBN Картридж 510",
+      "description": "Обʼєм: 1 мл\nCBN — канабіноїд для розслаблення, зниження стресу та покращення сну. Підходить тим, хто хоче відпочити після напруженого дня або легше засинати. Ефект м’який, без ейфорії.",
+      "price": "1300 грн ₴",
+      "image": "img/cbn510.jpg"
+    },
+    {
+      "id": "h4cbdcbn510",
+      "name": "H4CBD + CBN Картридж 510",
+      "description": "Обʼєм: 1 мл\nЗбалансована комбінація H4CBD та CBN для розслаблення тіла й ментального комфорту. Підходить для вечірнього релаксу або емоційного відновлення.",
+      "price": "1400 грн ₴",
+      "image": "img/h4cbdcbn510.jpg"
+    },
+    {
+      "id": "cb9510",
+      "name": "CB9 Картридж 510",
+      "description": "Обʼєм: 1 мл\nCB9 — легкий, м’який підйом без перевантаження. Покращує настрій, дає фокус і творчий настрій. Для тих, хто хоче бути в потоці.",
+      "price": "1800 грн ₴",
+      "image": "img/cb9510.jpg"
+    }
+  ],
+  "КАРТРИДЖІ INNOKIN": [
+    {
+      "id": "cbninnokin",
+      "name": "CBN Картридж Innokin",
+      "description": "Обʼєм: 0.8 мл\nCBN — ідеальний для вечірнього відпочинку та зняття напруги. Допомагає розслабитися після дня.",
+      "price": "1100 грн ₴",
+      "image": "img/cbninnokin.jpg"
+    },
+    {
+      "id": "h4cbdcbninnokin",
+      "name": "H4CBD + CBN Картридж Innokin",
+      "description": "Обʼєм: 0.8 мл\nH4CBD піднімає настрій, CBN знижує тривожність. Баланс для ментального та тілесного релаксу.",
+      "price": "1200 грн ₴",
+      "image": "img/h4cbdcbninnokin.jpg"
+    },
+    {
+      "id": "cb9innokin",
+      "name": "CB9 Картридж Innokin",
+      "description": "Обʼєм: 0.8 мл\nCB9 — легкий настрій і фокус. Для тих, хто хоче бути в моменті без зайвого навантаження.",
+      "price": "1700 грн ₴",
+      "image": "img/cb9innokin.jpg"
+    }
+  ],
+  "СТАРТЕР-ПАКИ": [
+    {
+      "id": "sp1cbn",
+      "name": "Starter Pack 1.0 (CBN)",
+      "description": "510 коннектор, змінний картридж 1 мл. CBN — для зняття стресу і покращення сну.",
+      "price": "1700 грн ₴",
+      "image": "img/sp1cbn.jpg"
+    },
+    {
+      "id": "sp1h4cbd",
+      "name": "Starter Pack 1.0 (H4CBD+CBN)",
+      "description": "510 коннектор, картридж 1 мл. Комбінація для розслаблення та підняття настрою.",
+      "price": "1800 грн ₴",
+      "image": "img/sp1h4cbd.jpg"
+    },
+    {
+      "id": "sp1cb9",
+      "name": "Starter Pack 1.0 (CB9)",
+      "description": "510 коннектор, картридж 1 мл. CB9 — легкий творчий підйом без навантаження.",
+      "price": "2200 грн ₴",
+      "image": "img/sp1cb9.jpg"
+    },
+    {
+      "id": "sp2cbn",
+      "name": "Starter Pack 2.0 (CBN)",
+      "description": "INNOKIN девайс, картридж 0.8 мл. Ідеальний для вечірнього чілу.",
+      "price": "1500 грн ₴",
+      "image": "img/sp2cbn.jpg"
+    },
+    {
+      "id": "sp2h4cbd",
+      "name": "Starter Pack 2.0 (H4CBD+CBN)",
+      "description": "INNOKIN, картридж 0.8 мл. Для ментального комфорту та релаксу.",
+      "price": "1600 грн ₴",
+      "image": "img/sp2h4cbd.jpg"
+    },
+    {
+      "id": "sp2cb9",
+      "name": "Starter Pack 2.0 (CB9)",
+      "description": "INNOKIN, картридж 0.8 мл. Фокус, настрій, легкість.",
+      "price": "2100 грн ₴",
+      "image": "img/sp2cb9.jpg"
+    },
+    {
+      "id": "monstercbn",
+      "name": "Monster Edition (CBN)",
+      "description": "510, дисплей, рег. напруги. Потужна версія з CBN для максимального релаксу. Не перевищуйте 12W.",
+      "price": "2100 грн ₴",
+      "image": "img/monstercbn.jpg"
+    },
+    {
+      "id": "monsterh4cbd",
+      "name": "Monster Edition (H4CBD+CBN)",
+      "description": "510, дисплей, рег. напруги. Потужний девайс для балансу настрою і розслаблення. Не перевищуйте 12W.",
+      "price": "2200 грн ₴",
+      "image": "img/monsterh4cbd.jpg"
+    },
+    {
+      "id": "monstercb9",
+      "name": "Monster Edition (CB9)",
+      "description": "510, дисплей, рег. напруги. Максимальний кайф і креатив. Не перевищуйте 12W.",
+      "price": "2600 грн ₴",
+      "image": "img/monstercb9.jpg"
+    }
+  ],
+  "ЦУКЕРКИ": [
+    {
+      "id": "jellychill1",
+      "name": "Желейні цукерки JELLY CHILL (1 шт)",
+      "description": "100 мг H4CBD — мʼяке розслаблення тіла та розуму. Формат — з’їв і чілиш.",
+      "price": "90 грн ₴",
+      "image": "img/jellychill.jpg"
+    },
+    {
+      "id": "jellychill10",
+      "name": "Желейні цукерки JELLY CHILL (10 шт)",
+      "description": "1000 мг H4CBD (10 x 100 мг) — вечірній релакс і зняття напруги.",
+      "price": "800 грн ₴",
+      "image": "img/jellychill.jpg"
+    },
+    {
+      "id": "jellyloops1",
+      "name": "Желейні цукерки JELLY LOOPS (1 шт)",
+      "description": "50 мг CB9 — легкий кайф, гарний настрій і фокус. Ідеально на день.",
+      "price": "140 грн ₴",
+      "image": "img/jellyloops.jpg"
+    },
+    {
+      "id": "jellyloops10",
+      "name": "Желейні цукерки JELLY LOOPS (10 шт)",
+      "description": "500 мг CB9 (10 x 50 мг) — чілиш і кайфуєш, як треба.",
+      "price": "1200 грн ₴",
+      "image": "img/jellyloops.jpg"
+    }
+  ],
+  "ЛИМОНАДИ": [
+    {
+      "id": "lemonade_mango",
+      "name": "CBD Лимонад Mango x Pineapple",
+      "description": "50 мг CBD у банці. Освіжає, знімає тривогу, настрій в нормі.",
+      "price": "110 грн ₴",
+      "image": "img/lemonade.jpg"
+    },
+    {
+      "id": "lemonade_bergamot",
+      "name": "CBD Лимонад Bergamot x Hibiscus",
+      "description": "50 мг CBD у банці. Спокій і легкість в кожному ковтку.",
+      "price": "110 грн ₴",
+      "image": "img/lemonade.jpg"
+    },
+    {
+      "id": "lemonade_orange",
+      "name": "CBD Лимонад Orange x Chili",
+      "description": "50 мг CBD у банці. Екзотичне поєднання для балансу та чілу.",
+      "price": "110 грн ₴",
+      "image": "img/lemonade.jpg"
+    },
+    {
+      "id": "lemonade_cola",
+      "name": "CBD Лимонад Cola",
+      "description": "50 мг CBD у банці. Класика зі спокійним вайбом.",
+      "price": "110 грн ₴",
+      "image": "img/lemonade.jpg"
+    }
+  ],
+  "Вейпи Cookies": [
+    {
+      "id": "cookies-cbn",
+      "name": "Вейп Cookies 1 ml з CBN 99%",
+      "description": "Картридж обʼємом 1 мл, CBN — мʼякий розслаблюючий ефект без ейфорії.",
+      "price": "1500 грн ₴",
+      "image": "img/cookies_cbn.jpg"
+    },
+    {
+      "id": "cookies-h4cbn",
+      "name": "Вейп Cookies 1 ml з H4CBD 49% + CBN 49%",
+      "description": "Картридж 1 мл. Комбінація для мʼякої ейфорії та ментального спокою.",
+      "price": "1600 грн ₴",
+      "image": "img/cookies_h4cbn.jpg"
+    },
+    {
+      "id": "cookies-cb9",
+      "name": "Вейп Cookies 1 ml з CB9 99%",
+      "description": "CB9 — творчий підйом, гарний настрій, потік. Обʼєм: 1 мл.",
+      "price": "2000 грн ₴",
+      "image": "img/cookies_cb9.jpg"
+    }
+  ]
 }
