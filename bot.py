@@ -16,26 +16,18 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
 # === Завантаження товарів ===
-
-
 def load_products():
     with open("products.json", encoding='utf-8') as f:
         return json.load(f)
-
 
 products = load_products()
 user_carts = {}
 user_orders = {}
 
 # === Функція для надсилання повідомлення адміну ===
-
-
 async def send_order_to_admin(user_id, order_data):
-    # Получаем объект пользователя по его ID
     user = await bot.get_chat(user_id)
-    # Получаем ник, если он есть
     username = user.username if user.username else "Нік відсутній"
-    # Используем ник
     order_text = f"Нове замовлення від користувача @{username}:\n"
     order_text += f"Імʼя та Прізвище: {order_data['name']}\n"
     order_text += f"Телефон: {order_data['phone']}\n"
@@ -43,7 +35,6 @@ async def send_order_to_admin(user_id, order_data):
     order_text += f"Відділення НП: {order_data['np']}\n"
     order_text += f"Спосіб оплати: {order_data['payment']}\n"
 
-    # Додаємо товари
     total = 0
     for entry in user_carts[user_id]:
         item = next(
@@ -54,25 +45,29 @@ async def send_order_to_admin(user_id, order_data):
             order_text += f"{item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
 
     order_text += f"\n💰 Загальна сума: {total} грн"
-
-    # Надсилаємо повідомлення адміну
     await bot.send_message(ADMIN_ID, order_text)
 
 # === Головне меню ===
-
-
 @dp.message_handler(commands=['start'])
 async def start_handler(message: types.Message):
     kb = InlineKeyboardMarkup(row_width=2)
+    kb.add(InlineKeyboardButton("🛒 До магазину", callback_data="go_to_shop"))
+    kb.add(InlineKeyboardButton("🛍 Мій кошик", callback_data="view_cart"))
+    kb.add(InlineKeyboardButton("📱 Наш канал", url="https://t.me/CPEN_ua"))
+    kb.add(InlineKeyboardButton("📖 Вікіпедія", url="https://t.me/CPEN_ua/509"))
+    
+    await message.answer("👋 Вітаємо! Виберіть одну з опцій:", reply_markup=kb)
+
+# === Обробка натискання кнопок на головному меню ===
+@dp.callback_query_handler(lambda c: c.data == "go_to_shop")
+async def go_to_shop(callback: types.CallbackQuery):
+    kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    # Кнопка "Мій кошик"
     kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
-    await message.answer("👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
+    await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Вибір категорії ===
-
-
 @dp.callback_query_handler(lambda c: c.data.startswith("cat_"))
 async def category_handler(callback: types.CallbackQuery):
     category = callback.data.split("cat_")[1]
@@ -81,17 +76,14 @@ async def category_handler(callback: types.CallbackQuery):
         kb.add(InlineKeyboardButton(
             item['name'], callback_data=f"item_{category}_{item['id']}"))
     kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_main"))
-    # Кнопка "Мій кошик"
     kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     await bot.send_message(callback.message.chat.id, f"📦 {category}", reply_markup=kb)
-
 
 @dp.callback_query_handler(lambda c: c.data == "back_main")
 async def back_to_main(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    # Кнопка "Мій кошик"
     kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
