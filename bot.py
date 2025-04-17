@@ -16,68 +16,88 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
 # === Завантаження товарів ===
+
+
 def load_products():
     with open("products.json", encoding='utf-8') as f:
         return json.load(f)
+
 
 products = load_products()
 user_carts = {}
 user_orders = {}
 
 # === Функція для надсилання повідомлення адміну ===
+
+
 async def send_order_to_admin(user_id, order_data):
-    user = await bot.get_chat(user_id)  # Получаем объект пользователя по его ID
-    username = user.username if user.username else "Нік відсутній"  # Получаем ник, если он есть
-    order_text = f"Нове замовлення від користувача @{username}:\n"  # Используем ник
+    # Получаем объект пользователя по его ID
+    user = await bot.get_chat(user_id)
+    # Получаем ник, если он есть
+    username = user.username if user.username else "Нік відсутній"
+    # Используем ник
+    order_text = f"Нове замовлення від користувача @{username}:\n"
     order_text += f"Імʼя та Прізвище: {order_data['name']}\n"
     order_text += f"Телефон: {order_data['phone']}\n"
     order_text += f"Місто: {order_data['city']}\n"
     order_text += f"Відділення НП: {order_data['np']}\n"
     order_text += f"Спосіб оплати: {order_data['payment']}\n"
-    
+
     # Додаємо товари
     total = 0
     for entry in user_carts[user_id]:
-        item = next((x for x in products[entry['category']] if x['id'] == entry['item_id']), None)
+        item = next(
+            (x for x in products[entry['category']] if x['id'] == entry['item_id']), None)
         if item:
             subtotal = item['price'] * entry['quantity']
             total += subtotal
             order_text += f"{item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
-    
+
     order_text += f"\n💰 Загальна сума: {total} грн"
-    
+
     # Надсилаємо повідомлення адміну
     await bot.send_message(ADMIN_ID, order_text)
 
 # === Головне меню ===
+
+
 @dp.message_handler(commands=['start'])
 async def start_handler(message: types.Message):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
+    # Кнопка "Мій кошик"
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     await message.answer("👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Вибір категорії ===
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith("cat_"))
 async def category_handler(callback: types.CallbackQuery):
     category = callback.data.split("cat_")[1]
     kb = InlineKeyboardMarkup()
     for item in products[category]:
-        kb.add(InlineKeyboardButton(item['name'], callback_data=f"item_{category}_{item['id']}"))
+        kb.add(InlineKeyboardButton(
+            item['name'], callback_data=f"item_{category}_{item['id']}"))
     kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="back_main"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
+    # Кнопка "Мій кошик"
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     await bot.send_message(callback.message.chat.id, f"📦 {category}", reply_markup=kb)
+
 
 @dp.callback_query_handler(lambda c: c.data == "back_main")
 async def back_to_main(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
+    # Кнопка "Мій кошик"
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Вибір товару ===
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith("item_"))
 async def item_handler(callback: types.CallbackQuery):
     _, category, item_id = callback.data.split("_", 2)
@@ -87,16 +107,20 @@ async def item_handler(callback: types.CallbackQuery):
         return
     photo = InputFile(item['image'])
     caption = f"<b>{item['name']}</b>\n\n{item['description']}\n<b>Ціна:</b> {item['price']} грн"
-    caption += f"💰 <b>Ціна:</b> {item['price']} грн"
     kb = InlineKeyboardMarkup(row_width=3)
     for qty in [1, 2, 3]:
-        kb.insert(InlineKeyboardButton(f"➕ {qty} шт", callback_data=f"add_{category}_{item_id}_{qty}"))
+        kb.insert(InlineKeyboardButton(
+            f"➕ {qty} шт", callback_data=f"add_{category}_{item_id}_{qty}"))
     kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🏷 До категорій", callback_data="back_to_categories"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
+    kb.add(InlineKeyboardButton("🏷 До категорій",
+           callback_data="back_to_categories"))
+    # Кнопка "Мій кошик"
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     await bot.send_photo(callback.message.chat.id, photo=photo, caption=caption, parse_mode='HTML', reply_markup=kb)
 
 # === Додавання до кошика ===
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith("add_"))
 async def add_to_cart(callback: types.CallbackQuery):
     _, category, item_id, qty = callback.data.split("_", 3)
@@ -109,11 +133,14 @@ async def add_to_cart(callback: types.CallbackQuery):
             entry['quantity'] += qty
             break
     else:
-        user_carts[user_id].append({"category": category, "item_id": item_id, "quantity": qty})
+        user_carts[user_id].append(
+            {"category": category, "item_id": item_id, "quantity": qty})
 
     await callback.answer(f"Додано {qty} шт до кошика ✅")
 
 # === Перегляд кошика ===
+
+
 @dp.callback_query_handler(lambda c: c.data == "view_cart")
 async def view_cart(callback: types.CallbackQuery):
     user_id = callback.from_user.id
@@ -127,34 +154,44 @@ async def view_cart(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup()
 
     for i, entry in enumerate(cart):
-        item = next((x for x in products[entry['category']] if x['id'] == entry['item_id']), None)
+        item = next(
+            (x for x in products[entry['category']] if x['id'] == entry['item_id']), None)
         if not item:
             continue
         subtotal = item['price'] * entry['quantity']
         total += subtotal
         text += f"{i+1}. {item['name']} — {entry['quantity']} шт x {item['price']} грн = {subtotal} грн\n"
         kb.add(
-            InlineKeyboardButton(f"➖ {item['name']}", callback_data=f"remove_{entry['item_id']}"),
-            InlineKeyboardButton(f"➕1", callback_data=f"addqty_{entry['item_id']}"),
-            InlineKeyboardButton(f"➖1", callback_data=f"subqty_{entry['item_id']}")
+            InlineKeyboardButton(
+                f"➖ {item['name']}", callback_data=f"remove_{entry['item_id']}"),
+            InlineKeyboardButton(
+                f"➕1", callback_data=f"addqty_{entry['item_id']}"),
+            InlineKeyboardButton(
+                f"➖1", callback_data=f"subqty_{entry['item_id']}")
         )
 
     text += f"\n💰 Всього: {total} грн"
     kb.add(InlineKeyboardButton("📦 Оформити замовлення", callback_data="checkout"))
-    kb.add(InlineKeyboardButton("⬅️ Назад до категорій", callback_data="back_to_categories"))
+    kb.add(InlineKeyboardButton("⬅️ Назад до категорій",
+           callback_data="back_to_categories"))
     kb.add(InlineKeyboardButton("🗑 Очистити кошик", callback_data="clear_cart"))
     await callback.message.answer(text, reply_markup=kb)
 
 # === Повернення до категорій ===
+
+
 @dp.callback_query_handler(lambda c: c.data == "back_to_categories")
 async def back_to_categories(callback: types.CallbackQuery):
     kb = InlineKeyboardMarkup(row_width=2)
     for category in products:
         kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
-    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))  # Кнопка "Мій кошик"
+    # Кнопка "Мій кошик"
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
     await bot.send_message(callback.message.chat.id, "👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 
 # === Очищення кошика ===
+
+
 @dp.callback_query_handler(lambda c: c.data == "clear_cart")
 async def clear_cart(callback: types.CallbackQuery):
     user_carts[callback.from_user.id] = []
@@ -162,6 +199,8 @@ async def clear_cart(callback: types.CallbackQuery):
     await view_cart(callback)
 
 # === Редагування кількості ===
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith("addqty_"))
 async def increase_qty(callback: types.CallbackQuery):
     item_id = callback.data.split("addqty_")[1]
@@ -170,6 +209,7 @@ async def increase_qty(callback: types.CallbackQuery):
             entry['quantity'] += 1
             break
     await view_cart(callback)
+
 
 @dp.callback_query_handler(lambda c: c.data.startswith("subqty_"))
 async def decrease_qty(callback: types.CallbackQuery):
@@ -182,17 +222,22 @@ async def decrease_qty(callback: types.CallbackQuery):
             break
     await view_cart(callback)
 
+
 @dp.callback_query_handler(lambda c: c.data.startswith("remove_"))
 async def remove_item(callback: types.CallbackQuery):
     item_id = callback.data.split("remove_")[1]
-    user_carts[callback.from_user.id] = [x for x in user_carts[callback.from_user.id] if x['item_id'] != item_id]
+    user_carts[callback.from_user.id] = [
+        x for x in user_carts[callback.from_user.id] if x['item_id'] != item_id]
     await view_cart(callback)
 
 # === Оформлення замовлення ===
+
+
 @dp.callback_query_handler(lambda c: c.data == "checkout")
 async def checkout(callback: types.CallbackQuery):
     user_orders[callback.from_user.id] = {"step": 1, "data": {}}
     await callback.message.answer("✍️ Введіть ваше <b>Імʼя та Прізвище</b>:", parse_mode='HTML')
+
 
 @dp.message_handler(lambda m: m.from_user.id in user_orders)
 async def process_order_data(message: types.Message):
@@ -216,23 +261,43 @@ async def process_order_data(message: types.Message):
         order['step'] = 5
         kb = InlineKeyboardMarkup().add(
             InlineKeyboardButton("💳 На картку", callback_data="pay_card"),
-            InlineKeyboardButton("📦 Накладений платіж", callback_data="pay_cod")
+            InlineKeyboardButton("📦 Накладений платіж",
+                                 callback_data="pay_cod")
         )
         await message.answer("💳 Виберіть спосіб оплати:", reply_markup=kb)
 
 # === Платіж ===
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith("pay_"))
 async def payment_method(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     order = user_orders[user_id]
     order['data']['payment'] = callback.data.split("_")[1]
-    
+
     # Надсилаємо замовлення адміну з нікнеймом користувача
     await send_order_to_admin(user_id, order['data'])
-    
-    await callback.message.answer("✅ Замовлення оформлено! Очікуйте підтвердження.")
+
+    start_kb = InlineKeyboardMarkup().add(
+        InlineKeyboardButton("🔄 Start", callback_data="back_to_main")
+    )
+    await callback.message.answer(
+        "✅ Замовлення оформлено! Очікуйте підтвердження.\n\nУ разі будь-яких питань звертайтесь до @PETERhhcPEN",
+        reply_markup=start_kb
+    )
+
     del user_orders[user_id]  # Очистка замовлення
     user_carts[user_id] = []  # Очистка кошика
 
+
+@dp.callback_query_handler(lambda c: c.data == "back_to_main")
+async def back_to_main_menu(callback: types.CallbackQuery):
+    kb = InlineKeyboardMarkup(row_width=2)
+    for category in products:
+        kb.add(InlineKeyboardButton(category, callback_data=f"cat_{category}"))
+    kb.add(InlineKeyboardButton("🛒 Мій кошик", callback_data="view_cart"))
+
+    await callback.message.answer("👋 Вітаємо у магазині! Оберіть категорію:", reply_markup=kb)
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+
