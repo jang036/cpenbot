@@ -142,28 +142,28 @@
   ],
   "ЛИМОНАДИ": [
     {
-      "id": "lemonade_mango",
+      "id": "lemonademango",
       "name": "CBD Лимонад Mango x Pineapple",
       "description": "50 мг CBD. Освіжає, знімає тривогу. Легкий фруктовий вайб.",
       "price": 110,
       "image": "img/lemonade.jpg"
     },
     {
-      "id": "lemonade_bergamot",
+      "id": "lemonadebergamot",
       "name": "CBD Лимонад Bergamot x Hibiscus",
       "description": "50 мг CBD. Спокій і легкість в кожному ковтку. Кисло-солодкий смак.",
       "price": 110,
       "image": "img/lemonade2.jpg"
     },
     {
-      "id": "lemonade_orange",
+      "id": "lemonadeorange",
       "name": "CBD Лимонад Orange x Chili",
       "description": "50 мг CBD. Цитрус з перчиком — освіжає і тонізує.",
       "price": 110,
       "image": "img/lemonade3.jpg"
     },
     {
-      "id": "lemonade_cola",
+      "id": "lemonadecola",
       "name": "CBD Лимонад Cola",
       "description": "50 мг CBD. Класична кола з ефектом легкого чілу.",
       "price": 110,
