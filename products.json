@@ -212,19 +212,19 @@
       "image": "img/lemonadecola.jpg"
     }
   ],
-  "Вейпи 1мл": [
+  "Вейпи ": [
     {
       "id": "cookies-cbn",
       "name": "Вейп SpaceClub 2 ml з CB9 99%",
       "description": "CB9 — мʼякий, розслаблюючий ефект без ейфорії. Обʼєм: 2 мл.",
-      "price": 1500,
+      "price": 3700,
       "image": "img/cookies_cbn.jpg"
     },
     {
       "id": "cbdvape1",
       "name": "Вейп 1 ml з CBD full spectrum",
       "description": "CBD Допомагає зняти напругу після насиченого дня, покращує настрій і сприяє внутрішньому балансу. Ідеально підходить для моментів, коли хочеться розслабитися, без психоактивного ефекту. Обʼєм: 1 мл.",
-      "price": 3700,
+      "price": 2000,
       "image": "img/cbdvape.jpg"
     },
     {
