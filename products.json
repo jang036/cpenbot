@@ -210,6 +210,13 @@
       "description": "50 мг CBD. Класична кола з ефектом легкого чілу.",
       "price": 110,
       "image": "img/lemonadecola.jpg"
+    },
+    {
+      "id": "kambucha",
+      "name": "Комбуча Gaba 9 Cola",
+      "description": "Комбуча з ГАБА. Коли хочеш щось схоже на алкоголь але без шкоди організму.",
+      "price": 330,
+      "image": "img/kamb.jpg"
     }
   ],
   "Вейпи ": [
